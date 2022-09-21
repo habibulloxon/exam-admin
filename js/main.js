@@ -63,13 +63,17 @@ const avMark = document.querySelector('.text-end')
 
 const renderStudents = () => {
     let sum = 0
+    studentTableBody.innerHTML = "";
     showingStudents.forEach((student) =>{
         sum += student.mark
     })
-    studentTableBody.innerHTML = "";
-
-    elementCount.textContent = `Count: ${showingStudents.length}`
-    avMark.textContent = `Average mark: ${Math.round(sum * 100 / 150 / showingStudents.length)}%`
+    if(sum <= 0){
+      elementCount.textContent = `No more students`
+      avMark.textContent = `Average mark: 0%`
+    } else if(sum > 0){
+      elementCount.textContent = `Count: ${showingStudents.length}`
+      avMark.textContent = `Average mark: ${Math.round(sum * 100 / 150 / showingStudents.length)}%`
+    }
     const studentsFragment = document.createDocumentFragment();
     showingStudents.forEach((student) => {
         const studentRow = renderStudent(student)
