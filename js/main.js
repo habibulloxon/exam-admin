@@ -1,16 +1,46 @@
+// ************** CALLING ALL ITEMS **************
+
 const template = document.getElementById('student-template')
 
-const addZero = function(number) {
+const studentTable = document.querySelector('#students-table')
+const studentTableBody = document.querySelector('#students-table-body')
+
+const elementCount = document.querySelector('.count')
+const avMark = document.querySelector('.text-end')
+
+const editForm = document.getElementById("edit-form")
+const editName = document.getElementById("editName")
+const editLastName = document.getElementById("editLastname")
+const editMark = document.getElementById("editMark")
+
+const filterForm = document.querySelector('.filter')
+
+const addForm = document.getElementById('add-form')
+
+// ************** CALLING ALL MODALS **************
+
+const editStudentModal = document.getElementById('edit-student-modal')
+const editStudentModalBootstrap = new bootstrap.Modal(editStudentModal)
+
+let addStudentModalEl = document.getElementById("add-student-modal");
+let addStudentModal = new bootstrap.Modal(addStudentModalEl);
+
+
+// ************** FUNCTIONS **************
+
+let showingStudents = students.slice(); // cloning array
+
+const addZero = function(number) {  // adding zero
     return number < 10 ? "0" + number : number
-  }
+}
   
-  const showDate = function(dateString) {
+const showDate = function(dateString) {  // getting data and time
     const date = new Date(dateString);
   
     return `${addZero(date.getDate())}.${addZero(date.getMonth() + 1)}.${date.getFullYear()} ${addZero(date.getHours())}:${addZero(date.getMinutes())}`;
-  }
+}
 
-const renderStudent = (student) => {
+const renderStudent = (student) => {  // displaying
     const {
         id,
         name : stName,
@@ -54,14 +84,7 @@ const renderStudent = (student) => {
     return studentRow
 }
 
-let showingStudents = students.slice();
-
-const studentTable = document.querySelector('#students-table')
-const studentTableBody = document.querySelector('#students-table-body')
-const elementCount = document.querySelector('.count')
-const avMark = document.querySelector('.text-end')
-
-const renderStudents = () => {
+const renderStudents = () => {  // rendering to display
     let sum = 0
     studentTableBody.innerHTML = "";
     showingStudents.forEach((student) =>{
@@ -83,59 +106,84 @@ const renderStudents = () => {
 }
 renderStudents();
 
-
-// delete
-
-studentTable.addEventListener("click", (evt) => {
-
-    if(evt.target.matches(".btn-outline-danger")){
-      const clickedBtn = +evt.target.dataset.student
+studentTable.addEventListener("click", (evt) => {  // delete + edit
   
-      const clickedStudent = showingStudents.findIndex((student) => {
-        return student.id === clickedBtn
-      })
-  
-      students.splice(clickedStudent, 1)
-      showingStudents.splice(clickedStudent, 1)
+  if(evt.target.matches(".btn-outline-danger")){
 
-      let items = localStorage.getItem("students");
+    const clickedBtn = +evt.target.dataset.student
+    
+    const clickedStudent = showingStudents.findIndex((student) => {
+      return student.id === clickedBtn
+    })
+    
+    students.splice(clickedStudent, 1)
+    showingStudents.splice(clickedStudent, 1)
+    
+    let items = localStorage.getItem("students");
+    
+    items = students.filter(function (item) {
+      if (item.id !== item.id) {
+        return item;
+      }
+    });
+    
+    localStorage.setItem("students", JSON.stringify(students));
+    
+    renderStudents()
 
-      items = students.filter(function (item) {
-        if (item.id !== item.id) {
-          return item;
-        }
-      });
-    
-      localStorage.setItem("students", JSON.stringify(students));
-    
-      renderStudents()
+  } else if(evt.target.matches('.btn-outline-secondary')){
+
+    const clickedBtn = +evt.target.dataset.student
+
+    const clickedStudent = showingStudents.find((student) => {
+      return student.id === clickedBtn
+    })
+
+    editName.value = clickedStudent.name
+    editLastName.value = clickedStudent.lastName
+    editMark.value = clickedStudent.mark
+    editForm.setAttribute('data-editing-id', clickedStudent.id)
+  }
+})
+renderStudents()
+
+editForm.addEventListener('submit', (evt) => { // to edit
+  evt.preventDefault()
+
+  const editId = +evt.target.dataset.editingId
+
+  const nameValue = editName.value
+  const lastNameValue = editLastName.value
+  const markValue = +editMark.value
+
+  if (nameValue.trim() && lastNameValue.trim() && markValue >= 0 && markValue <= 150) {
+    const newStudent = {
+      id: editId,
+      name: nameValue,
+      lastName: lastNameValue,
+      mark: markValue,
+      markedDate: new Date().toISOString()
     }
-    //  else if(".btn-outline-success"){
-    //   const clickedBtn = +evt.target.dataset.student
 
-    //   const inputValueEdit = evt.target.elements 
-    //   let editNameInput = inputValueEdit.editName.value
-    //   let editLastNameInput = inputValueEdit.editLastname.value
-    //   let editMarkInput = inputValueEdit.editMark.value
+    const editingItemIndex = students.findIndex((student) => {
+      return student.id === editId
+    })
 
-    //   const clickedStudent = showingStudents.find((student) => {
-    //     return student.id === clickedBtn
-    //     editNameInput = clickedStudent.name
-    //     editLastNameInput = clickedStudent.lastName
-    //     editMarkInput = clickedStudent.mark
-    //   })
-    //   renderStudents()
-    // }
+    const editingShowItemIndex = showingStudents.findIndex((student) => {
+      return student.id === editId
+    })
+
+    students.splice(editingItemIndex, 1, newStudent)
+    showingStudents.splice(editingShowItemIndex, 1, newStudent)
+    localStorage.setItem("students", JSON.stringify(students))
+
+    editForm.reset()
+    editStudentModalBootstrap.hide()
+  }
+  renderStudents()
 })
 
-// add 
-
-let addStudentModalEl = document.getElementById("add-student-modal");
-let addStudentModal = new bootstrap.Modal(addStudentModalEl);
-
-const addForm = document.getElementById('add-form')
-
-addForm.addEventListener('submit', (e) => {
+addForm.addEventListener('submit', (e) => {  // add items
     e.preventDefault()  
     let element = e.target.elements
 
@@ -161,15 +209,7 @@ addForm.addEventListener('submit', (e) => {
     addStudentModal.hide()
 })
 
-//edit
-
-
-
-// sort
-
-const filterForm = document.querySelector('.filter')
-
-filterForm.addEventListener('submit', (e) => {
+filterForm.addEventListener('submit', (e) => {  // sort
   e.preventDefault();
   const sortValue = e.target.elements.sortby.value
   const searchValue = e.target.elements.search.value
