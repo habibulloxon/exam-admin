@@ -91,14 +91,41 @@ studentTable.addEventListener("click", (evt) => {
     if(evt.target.matches(".btn-outline-danger")){
       const clickedBtn = +evt.target.dataset.student
   
-      const clickedStudent = students.findIndex((student) => {
-        return student.id == clickedBtn
+      const clickedStudent = showingStudents.findIndex((student) => {
+        return student.id === clickedBtn
       })
   
-    //   students.splice(clickedStudent, 1)
+      students.splice(clickedStudent, 1)
       showingStudents.splice(clickedStudent, 1)
+
+      let items = localStorage.getItem("students");
+
+      items = students.filter(function (item) {
+        if (item.id !== id) {
+          return item;
+        }
+      });
+    
+      localStorage.setItem("students", JSON.stringify(students));
+    
+      renderStudents()
+    } else if(".btn-outline-success"){
+      const clickedBtn = +evt.target.dataset.student
+
+      const inputValueEdit = evt.target.elements 
+      let editNameInput = inputValueEdit.editName.value
+      let editLastNameInput = inputValueEdit.editLastname.value
+      let editMarkInput = inputValueEdit.editMark.value
+
+      const clickedStudent = showingStudents.find((student) => {
+        return student.id === clickedBtn
+
+        editNameInput = student.name
+        editLastNameInput = student.lastName
+        editMarkInput = student.mark
+      })
+      renderStudents()
     }
-    renderStudents()
 })
 
 // add 
@@ -124,6 +151,8 @@ addForm.addEventListener('submit', (e) => {
             mark: mark,
             markedDate: new Date().toISOString()
         }   
+        students.push(newStudent)
+        localStorage.setItem("students", JSON.stringify(students))
         showingStudents.push(newStudent)
     }
     renderStudents(); 
