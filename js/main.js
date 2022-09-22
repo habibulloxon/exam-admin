@@ -101,7 +101,7 @@ studentTable.addEventListener("click", (evt) => {
       let items = localStorage.getItem("students");
 
       items = students.filter(function (item) {
-        if (item.id !== id) {
+        if (item.id !== item.id) {
           return item;
         }
       });
@@ -109,23 +109,23 @@ studentTable.addEventListener("click", (evt) => {
       localStorage.setItem("students", JSON.stringify(students));
     
       renderStudents()
-    } else if(".btn-outline-success"){
-      const clickedBtn = +evt.target.dataset.student
-
-      const inputValueEdit = evt.target.elements 
-      let editNameInput = inputValueEdit.editName.value
-      let editLastNameInput = inputValueEdit.editLastname.value
-      let editMarkInput = inputValueEdit.editMark.value
-
-      const clickedStudent = showingStudents.find((student) => {
-        return student.id === clickedBtn
-
-        editNameInput = student.name
-        editLastNameInput = student.lastName
-        editMarkInput = student.mark
-      })
-      renderStudents()
     }
+    //  else if(".btn-outline-success"){
+    //   const clickedBtn = +evt.target.dataset.student
+
+    //   const inputValueEdit = evt.target.elements 
+    //   let editNameInput = inputValueEdit.editName.value
+    //   let editLastNameInput = inputValueEdit.editLastname.value
+    //   let editMarkInput = inputValueEdit.editMark.value
+
+    //   const clickedStudent = showingStudents.find((student) => {
+    //     return student.id === clickedBtn
+    //     editNameInput = clickedStudent.name
+    //     editLastNameInput = clickedStudent.lastName
+    //     editMarkInput = clickedStudent.mark
+    //   })
+    //   renderStudents()
+    // }
 })
 
 // add 
