@@ -211,8 +211,9 @@ addForm.addEventListener('submit', (e) => {  // add items
 
 filterForm.addEventListener('submit', (e) => {  // sort
   e.preventDefault();
-  const sortValue = e.target.elements.sortby.value
-  const searchValue = e.target.elements.search.value
+  let elements = e.target.elements;
+  let searchValue = elements.search.value;
+  let sortValue = elements.sortby.value
 
   showingStudents.sort((a, b) => {
     switch (sortValue) {
@@ -235,5 +236,11 @@ filterForm.addEventListener('submit', (e) => {  // sort
         break;
     }
   })
+  showingStudents = students.filter((student) => {
+    const regularExp = new RegExp(searchValue, 'gi')
+    const nameAndLastName = `${student.name} ${student.lastName}`;
+    return nameAndLastName.match(regularExp)
+  })
   renderStudents()
+  filterForm.reset()
 })
