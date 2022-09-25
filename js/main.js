@@ -211,11 +211,14 @@ addForm.addEventListener('submit', (e) => {  // add items
 
 filterForm.addEventListener('submit', (e) => {  // sort
   e.preventDefault();
+
   let elements = e.target.elements;
   let searchValue = elements.search.value;
-  let sortValue = elements.sortby.value
+  let sortValue = elements.sortby.value;
+  let fromMark = elements.from.value;
+  let toMark = elements.to.value;
 
-  showingStudents.sort((a, b) => {
+  showingStudents = students.sort((a, b) => {
     switch (sortValue) {
       case "1":
         if (a.name > b.name) {
@@ -235,11 +238,13 @@ filterForm.addEventListener('submit', (e) => {  // sort
 
         break;
     }
-  })
-  showingStudents = students.filter((student) => {
-    const regularExp = new RegExp(searchValue, 'gi')
+  }).filter((student) => {
+    const studentMarkPercent = Math.round(student.mark * 100 / 150)
+    const regularExp = new RegExp(searchValue, "gi")
     const nameAndLastName = `${student.name} ${student.lastName}`;
-    return nameAndLastName.match(regularExp)
+    const toMarkCondition = !toMark ? true : studentMarkPercent <= toMark
+
+    return studentMarkPercent >= fromMark && toMarkCondition && nameAndLastName.match(regularExp)
   })
   renderStudents()
   filterForm.reset()
